@@ -24,6 +24,15 @@ def process_image(ch, method, properties, body):
         print(f"Uploads Directory exists: {uploads_dir}")
     else:
         print(f"Uploads Directory does not exist")
+    # Check if the path exists
+    if os.path.exists(uploads_dir):
+        # Iterate over the files and directories in the given path
+        for root, dirs, files in os.walk(uploads_dir):
+            for file in files:
+                print(os.path.join(root, file))
+    else:
+        print("The provided path does not exist.")
+    
     img = Image.open(uploads_dir_filepath) #filepath
     img = img.resize((200, 200))  # Resize image to 200x200
     output_path = os.path.join(OUTPUT_FOLDER, os.path.basename(filepath))
