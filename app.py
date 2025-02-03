@@ -2,9 +2,41 @@ import os
 import pika
 from flask import Flask, request, jsonify, render_template
 
+import mysql.connector
+
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+# Connect to MySQL Database
+conn = mysql.connector.connect(
+    host="your_railway_host",
+    user="your_mysql_user",
+    password="your_mysql_password",
+    database="your_database"
+)
+cursor = conn.cursor()
+
+# Create table if not exists
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS images (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255),
+        data LONGBLOB
+    )
+""")
+
+# Function to save image
+def save_image(image_path):
+    with open(image_path, "rb") as file:
+        binary_data = file.read()
+    
+    sql = "INSERT INTO images (name, data) VALUES (%s, %s)"
+    cursor.execute(sql, (image_path, binary_data))
+    conn.commit()
+    print(f"Image '{image_path}' saved successfully.")
+
 
 # CloudAMQP connection
 AMQP_URL = "amqps://hfwdoxdg:1aeRZiQ9lXXeWwlFioDsGMCqNAfi_4sU@campbell.lmq.cloudamqp.com/hfwdoxdg" #"your_cloudamqp_url"
@@ -68,6 +100,13 @@ def upload_file():
     if file:
         filepath = os.path.join(uploads_dir, file.filename) # caps 
         file.save(filepath)
+        # Example Usage
+        save_image(filepath)
+        # Close Connection
+        cursor.close()
+        conn.close()
+
+
         list_files(uploads_dir)
 
         connection, channel = get_rabbitmq_connection()
