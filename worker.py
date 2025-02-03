@@ -25,6 +25,7 @@ def process_image(ch, method, properties, body):
     else:
         print(f"Uploads Directory does not exist")
     # Check if the path exists
+    uploads_dir = "/var/lib/containers/railwayapp/bind-mounts/626efc24-bacc-44b3-9d5b-b3cd3ff77d88/vol_qodjv4vgxlsj33kt"
     if os.path.exists(uploads_dir):
         # Iterate over the files and directories in the given path
         for root, dirs, files in os.walk(uploads_dir):
