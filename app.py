@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 # Get the MySQL URL from environment variables
 mysql_url = os.getenv("MYSQL_URL")
-print(f" url : {MYSQL_URL}")
+print(f" url : {mysql_url}")
 
 if mysql_url:
     try:
