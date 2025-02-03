@@ -3,29 +3,55 @@ import pika
 from flask import Flask, request, jsonify, render_template
 
 import mysql.connector
+from mysql.connector import Error
+from urllib.parse import urlparse
+
+# Get the MySQL URL from environment variables
+mysql_url = os.getenv("MYSQL_URL")
+print(f" url : {MYSQL_URL}")
+
+if mysql_url:
+    try:
+        # Parse the MySQL URL
+        parsed_url = urlparse(mysql_url)
+
+        # Extract MySQL connection details
+        mysql_config = {
+            "host": parsed_url.hostname,
+            "port": parsed_url.port or 3306,  # Default MySQL port
+            "user": parsed_url.username,
+            "password": parsed_url.password,
+            "database": parsed_url.path.lstrip("/"),  # Remove leading "/"
+        }
+
+        # Establish the connection
+        connectionDB = mysql.connector.connect(**mysql_config)
+
+        if connectionDB.is_connected():
+            print("Connected to MySQL successfully!")
+            cursor = connectionDB.cursor()
+
+            # Create table if not exists
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS images (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255),
+                    data LONGBLOB
+                )
+            """)
+
+            #connectionDB.close()
+    except Error as e:
+        print(f"Error connecting to MySQL: {e}")
+else:
+    print("MYSQL_URL environment variable is not set.")
+
+
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
-# Connect to MySQL Database
-conn = mysql.connector.connect(
-    host="your_railway_host",
-    user="your_mysql_user",
-    password="your_mysql_password",
-    database="your_database"
-)
-cursor = conn.cursor()
-
-# Create table if not exists
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS images (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255),
-        data LONGBLOB
-    )
-""")
 
 # Function to save image
 def save_image(image_path):
@@ -33,8 +59,9 @@ def save_image(image_path):
         binary_data = file.read()
     
     sql = "INSERT INTO images (name, data) VALUES (%s, %s)"
+    cursor = connectionDB.cursor()
     cursor.execute(sql, (image_path, binary_data))
-    conn.commit()
+    connectionDB.commit()
     print(f"Image '{image_path}' saved successfully.")
 
 
