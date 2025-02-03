@@ -2,3 +2,4 @@ flask
 pika
 pillow
 gunicorn  # Required for deploying Flask on Railway
+mysql-connector-python
