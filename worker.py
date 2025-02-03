@@ -18,7 +18,12 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 def process_image(ch, method, properties, body):
     filepath = body.decode() # "uploads/filename.jpeg"
     uploads_dir_filepath = os.path.join(app_dir, filepath)
+    uploads_dir = os.path.join(app_dir, "uploads")
     print(f"App file path: {uploads_dir_filepath}")
+    if os.path.exists(uploads_dir):
+        print(f"Uploads Directory exists: {uploads_dir}")
+    else:
+        print(f"Uploads Directory does not exist")
     img = Image.open(uploads_dir_filepath) #filepath
     img = img.resize((200, 200))  # Resize image to 200x200
     output_path = os.path.join(OUTPUT_FOLDER, os.path.basename(filepath))
