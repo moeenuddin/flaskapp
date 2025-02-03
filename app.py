@@ -13,6 +13,10 @@ connection = pika.BlockingConnection(params)
 channel = connection.channel()
 channel.queue_declare(queue="image_resize")
 
+@app.route("/",methods=["GET"])
+def index():
+    print("Image reducer v1.0")
+    
 @app.route("/upload", methods=["POST"])
 def upload_file():
     file = request.files["file"]
