@@ -1,6 +1,6 @@
 import os
 import pika
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
