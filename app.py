@@ -7,7 +7,7 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # CloudAMQP connection
-AMQP_URL = "your_cloudamqp_url"
+AMQP_URL = "amqps://hfwdoxdg:1aeRZiQ9lXXeWwlFioDsGMCqNAfi_4sU@campbell.lmq.cloudamqp.com/hfwdoxdg" #"your_cloudamqp_url"
 params = pika.URLParameters(AMQP_URL)
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
