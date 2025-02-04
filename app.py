@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 # Get the MySQL URL from environment variables
 mysql_url = os.getenv("MYSQL_URL")
 print(f" url : {mysql_url}")
+connectionDB = None
 
 if mysql_url:
     try:
@@ -130,8 +131,9 @@ def upload_file():
         # Example Usage
         save_image(filepath)
         # Close Connection
+        cursor = connectionDB.cursor()
         cursor.close()
-        conn.close()
+        connectionDB.close()
 
 
         list_files(uploads_dir)
